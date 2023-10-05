@@ -1,3 +1,1 @@
-# travel-planner
-
-travel planner project:
+# Travel Planner
