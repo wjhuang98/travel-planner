@@ -10,10 +10,10 @@ const Home = () => {
         <Layout>
             <form
                 onSubmit={(e) => { console.log(input, filter, distance); e.preventDefault(); }}
-                className="h-full w-screen flex flex-col justify-center items-center space-y-2"
+                className="h-full w-2/5 flex flex-col justify-center items-center space-y-2"
             >
                 <div
-                    className="w-1/3 h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-100"
+                    className="w-full h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-100"
                 >
                     <input
                         type="text"
@@ -28,7 +28,7 @@ const Home = () => {
                     </button>
                 </div>
 
-                <div className="w-1/3 h-12 flex items-center space-x-2 text-neutral-800">
+                <div className="w-full h-12 flex items-center space-x-2 text-neutral-800">
                     <button
                         onClick={(e) => { setFilter(`${filter == "attractions" ? "" : "attractions"}`); e.preventDefault(); }}
                         className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "attractions" ? "bg-neutral-300 text-neutral-100" : ""}`}
