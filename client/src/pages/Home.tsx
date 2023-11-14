@@ -8,17 +8,17 @@ const Home = () => {
 
     return (
         <Layout>
-            <form 
-                onSubmit={(e) => {console.log(input, filter, distance); e.preventDefault();}}
+            <form
+                onSubmit={(e) => { console.log(input, filter, distance); e.preventDefault(); }}
                 className="h-full w-screen flex flex-col justify-center items-center space-y-2"
             >
                 <div
                     className="w-1/3 h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-100"
                 >
-                    <input 
-                        type="search"
+                    <input
+                        type="text"
                         placeholder="search"
-                        onChange={(e) => setInput(e.target.value)} 
+                        onChange={(e) => setInput(e.target.value)}
                         className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg"
                     />
                     <button className="rounded-r-full h-full w-16 pl-4">
@@ -30,30 +30,30 @@ const Home = () => {
 
                 {/* filters */}
                 <div className="w-1/3 h-12 flex items-center space-x-2 text-neutral-800">
-                    <button 
-                        onClick={(e) => {setFilter(`${filter =="attractions" ? "" : "attractions"}`); e.preventDefault();}}
+                    <button
+                        onClick={(e) => { setFilter(`${filter == "attractions" ? "" : "attractions"}`); e.preventDefault(); }}
                         className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "attractions" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Attractions
                     </button>
-                    <button 
-                        onClick={(e) => {setFilter(`${filter =="restaurants" ? "" : "restaurants"}`); e.preventDefault();}}
+                    <button
+                        onClick={(e) => { setFilter(`${filter == "restaurants" ? "" : "restaurants"}`); e.preventDefault(); }}
                         className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "restaurants" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Restaurants
                     </button>
-                    <button 
-                        onClick={(e) => {setFilter(`${filter =="hotels" ? "" : "hotels"}`); e.preventDefault();}}
+                    <button
+                        onClick={(e) => { setFilter(`${filter == "hotels" ? "" : "hotels"}`); e.preventDefault(); }}
                         className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "hotels" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Hotels
                     </button>
                     <div className="rounded-lg bg-neutral-100 shaddow-inner h-full flex-grow flex items-center justify-center space-x-2">
-                        <input 
-                            type="range" 
-                            min="1" 
-                            max="50" 
-                            value={distance} 
+                        <input
+                            type="range"
+                            min="1"
+                            max="50"
+                            value={distance}
                             onChange={(e) => (setDistance(parseInt(e.target.value)))}
                         />
                         <span>
