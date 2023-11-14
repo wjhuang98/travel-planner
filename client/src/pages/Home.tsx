@@ -28,23 +28,22 @@ const Home = () => {
                     </button>
                 </div>
 
-                {/* filters */}
                 <div className="w-1/3 h-12 flex items-center space-x-2 text-neutral-800">
                     <button
                         onClick={(e) => { setFilter(`${filter == "attractions" ? "" : "attractions"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "attractions" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "attractions" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Attractions
                     </button>
                     <button
                         onClick={(e) => { setFilter(`${filter == "restaurants" ? "" : "restaurants"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "restaurants" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "restaurants" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Restaurants
                     </button>
                     <button
                         onClick={(e) => { setFilter(`${filter == "hotels" ? "" : "hotels"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/6 ${filter == "hotels" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "hotels" ? "bg-neutral-300 text-neutral-100" : ""}`}
                     >
                         Hotels
                     </button>
