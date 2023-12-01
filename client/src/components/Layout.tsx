@@ -1,4 +1,4 @@
-import Navbar from "./navigation/Navbar";
+// import Navbar from "./navigation/Navbar";
 import { ReactNode } from "react";
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 const Layout = ({children}: Props) => {
     return (
         <div className="h-screen w-screen flex flex-wrap justify-center">
-            <Navbar />
+            {/* <Navbar /> */}
             {children}
         </div>
     )

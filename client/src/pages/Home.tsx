@@ -1,4 +1,4 @@
-import Layout from "../components/Layout";
+// import Layout from "../components/Layout";
 import { useState } from "react";
 
 const Home = () => {
@@ -6,14 +6,45 @@ const Home = () => {
     const [distance, setDistance] = useState<number>(25);
     const [filter, setFilter] = useState<string>("")
 
+    async function fetchBackendData(): Promise<any> {
+        // const queryParams = {
+        //     location: input,
+        //     distance: distance,
+        //     filter: filter,
+        // };
+      
+        // const queryString = Object.keys(queryParams)
+        // .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+        // .join('&');
+        const queryString = "location=" + encodeURIComponent(input) + "&distance=" + encodeURIComponent(distance) + "&filter=" + encodeURIComponent(filter);
+    
+        try {
+            const response = await fetch(`http://localhost:8080/api/search?${queryString}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+        // Process your data
+            return data; // Return the data for further processing
+        } catch (error) {
+            console.error('Error fetching data: ', error);
+            // Handle the error
+            throw error; // Re-throw the error if you want to handle it at a higher level
+        }
+    }
+
     return (
-        <Layout>
+        <div className="w-full h-screen pt-4 bg-neutral-900">
+
+
+        <div className="flex justify-center w-full">
             <form
-                onSubmit={(e) => { console.log(input, filter, distance); e.preventDefault(); }}
+                onSubmit={(e) => { fetchBackendData(); e.preventDefault(); }}
                 className="h-full w-2/5 flex flex-col justify-center items-center space-y-2"
             >
+                <h1 className="text-4xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">Travel Planner</h1>
                 <div
-                    className="w-full h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-100"
+                    className="w-full h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-700"
                 >
                     <input
                         type="text"
@@ -22,32 +53,32 @@ const Home = () => {
                         className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg"
                     />
                     <button className="rounded-r-full h-full w-16 pl-4">
-                        <svg className="stroke-neutral-400 hover:stroke-neutral-800 hover:ping w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}>
+                        <svg className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                     </button>
                 </div>
 
-                <div className="w-full h-12 flex items-center space-x-2 text-neutral-800">
+                <div className="w-full h-12 flex items-center space-x-2 text-neutral-200">
                     <button
                         onClick={(e) => { setFilter(`${filter == "attractions" ? "" : "attractions"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "attractions" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "attractions" ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700" : "hover:bg-neutral-800"}`}
                     >
                         Attractions
                     </button>
                     <button
                         onClick={(e) => { setFilter(`${filter == "restaurants" ? "" : "restaurants"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "restaurants" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "restaurants" ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700" : "hover:bg-neutral-800"}`}
                     >
                         Restaurants
                     </button>
                     <button
                         onClick={(e) => { setFilter(`${filter == "hotels" ? "" : "hotels"}`); e.preventDefault(); }}
-                        className={`rounded-lg bg-neutral-100 shaddow-inner h-full w-1/5 ${filter == "hotels" ? "bg-neutral-300 text-neutral-100" : ""}`}
+                        className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "hotels" ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700" : "hover:bg-neutral-800"}`}
                     >
                         Hotels
                     </button>
-                    <div className="rounded-lg bg-neutral-100 shaddow-inner h-full flex-grow flex items-center justify-center space-x-2">
+                    <div className="rounded-lg bg-neutral-700 shaddow-lg h-full flex-grow flex items-center justify-center space-x-2">
                         <input
                             type="range"
                             min="1"
@@ -61,7 +92,8 @@ const Home = () => {
                     </div>
                 </div>
             </form>
-        </Layout>
+        </div>
+        </div>
     )
 }
 
