@@ -1,0 +1,1 @@
+goapi-gen -package main ../../oapi/oapi.yaml > ../travelplanner/oapi.go

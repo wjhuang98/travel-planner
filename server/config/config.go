@@ -1,12 +1,15 @@
 package config
 
+import "os"
+
 type Config struct {
-	GoogleKey      string
+	OpenCage       string
 	TripAdvisorKey string
-	LogLevel       int
 }
 
-func GetConfig() (Config, error) {
-	c := Config{}
-	return c, nil
+func GetConfig() Config {
+	c := Config{
+		TripAdvisorKey: os.Getenv("TRIPADVISORKEY"),
+	}
+	return c
 }

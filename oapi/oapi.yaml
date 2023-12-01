@@ -1,0 +1,88 @@
+openapi: 3.1.3
+info:
+  title: travel planner
+  description: api to travel planner backend
+  version: 0.0.1
+servers:
+  - url: /api
+paths:
+  /search:
+    get:
+      summary: Get establishment information
+      operationId: search
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          required: true
+          description: Hotels, Restaurants, or Attractions
+        - in: query
+          name: location
+          schema:
+            type: string
+          required: true
+          description: City Name
+        - in: query
+          name: distance
+          schema:
+            type: number
+            format: double
+          required: true
+      responses:
+          "200":
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PlacesList"
+          "400":
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          "418":
+            description: I'm a teapot
+          "500":
+            description: Internal Server Error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+          "502":
+            description: Bad Gateway
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    Error:
+      properties:
+        message:
+          type: string
+      required:
+        - message
+    Place:
+      type: object
+      properties:
+        name: 
+          type: string
+        address:
+          type: string
+        rating:
+          type: number
+        photos:
+          type: array
+          items:
+            type: string
+      required:
+        - name
+        - address
+        - rating
+        - photos
+    PlacesList:
+      type: array
+      items:
+        $ref: "#/components/schemas/Place"

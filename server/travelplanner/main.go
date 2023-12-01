@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"main/config"
 	"os"
 	"os/signal"
 )
@@ -11,7 +12,9 @@ func main() {
 	listenCh := make(chan error)
 	signal.Notify(notifyCh, os.Interrupt)
 
-	tp := TravelPlanner{}
+	tp := TravelPlanner{
+		config: config.GetConfig(),
+	}
 
 	go func() {
 		listenCh <- tp.Run()
