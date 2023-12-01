@@ -21,7 +21,13 @@ type TravelPlanner struct {
 func (tp *TravelPlanner) Run() error {
 	router := chi.NewRouter()
 	router.Use(middleware.RedirectSlashes)
-	router.Use(cors.Handler(cors.Options{AllowedOrigins: []string{"localhost:5173"}}))
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+	}))
 
 	handler := Handler(tp, WithRouter(router), WithServerBaseURL("/api"))
 	return http.ListenAndServe(":8080", handler)
