@@ -11,9 +11,8 @@ type Places struct {
 }
 
 type Details struct {
-	LocationID string `json:"location_id"`
-	Name       string `json:"name"`
-	WebURL     string `json:"web_url"`
+	Name   string `json:"name"`
+	WebURL string `json:"web_url"`
 
 	Rating string `json:"rating"`
 }

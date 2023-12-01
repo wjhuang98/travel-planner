@@ -33,6 +33,10 @@ func (tp *TravelPlanner) Run() error {
 	return http.ListenAndServe(":8080", handler)
 }
 
+func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details) {} // TODO
+
+func (tp *TravelPlanner) GetPhotos(photos *tripadvisor.Photos) {} // TODO
+
 func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
 	key := tp.config.TripAdvisorKey
 	url := "https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%252C-71.10767&key=" + key + "&category=restaurants&radius=100&radiusUnit=mi&language=en"
@@ -56,7 +60,6 @@ func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
 	}
 
 	json.Unmarshal(body, &places)
-	// fmt.Println(string(body))
 
 	return
 }
@@ -75,8 +78,8 @@ func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params S
 		response = append(response, Place{
 			Address: places.Data[i].AddressObj.AddressString,
 			Name:    places.Data[i].Name,
-			Photos:  make([]string, 0),
-			Rating:  3,
+			Photos:  make([]string, 0), // FOR TESTING
+			Rating:  3,                 // FOR TESTING
 		})
 	}
 
