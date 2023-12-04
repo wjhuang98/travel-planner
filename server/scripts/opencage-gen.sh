@@ -1,1 +1,0 @@
-goapi-gen -package opencage ../opencage/opencage-openapi-3.0.0.yaml > ../opencage/opencage.go
