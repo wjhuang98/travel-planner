@@ -32,6 +32,7 @@ type Place struct {
 	Name    string   `json:"name"`
 	Photos  []string `json:"photos"`
 	Rating  float32  `json:"rating"`
+	URL     string   `json:"url"`
 }
 
 // PlacesList defines model for PlacesList.
@@ -327,16 +328,16 @@ func WithErrorHandler(handler func(w http.ResponseWriter, r *http.Request, err e
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xU3WobTQx9lUHfB71ZvM5PoexdW0oaWtqSXAZfyLtyPOnOTyRtigl+96JZx2nipaVQ",
-	"cuXxzpHOkXQ099CmkFOkqALNPUi7poDl+IE5sR0yp0ysnsrnQCJ4TXbUTSZoQJR9vIbttgKm28EzddBc",
-	"7YGLbQXfemzpMBd2HZPIRK4KIgaavMjrpKnEeKUwHbz7gMy4sf+MajeP0DiEJfGB5kJa7XXtA/esi33u",
-	"tLyhVuGhOPnsRZ+I+p9pBQ38Vz92uN61tx77cSDU5Pi4ShbekbTss/oUDZC90+SU8Y56l3uMkdgtsf1O",
-	"sYMK1GtviZ4CoII7YhlTzGfz2ZFxpkwRs4cGTmZHsxMrDnVdNNdCyO3ajtdUyrFxoYk476CBy/HaIhgD",
-	"KbFAc/Vc7Mek1EvlLkgUB8aoUrnE7q0qY2sga6036O1AvIGHacPK91pkPw5FeaBq58tJ0z1nf+91476M",
-	"g5zi6FNbCvpblqlcnRfF2NJvc60SB1RDp2HZG/a5CRcWLjlFGffieD63nzZFpVjGgDn3ftRd34jVef8L",
-	"wx+tNrqz+Otps75+Mkec/kO+8dmYoHqHnbug24GkbM3p0ZtDm5+/Cg6dEuZUQK9fQth5VOKIvbskviN2",
-	"O6CxH79MW85Q6Ud5ACqQIQTkDTRwRupsg5a9l3WgqM7eBvOSRZZUUhSPOzhwDw3UttnbxfZnAAAA//+5",
-	"WEXC2QUAAA==",
+	"H4sIAAAAAAAC/7xUTW8TQQz9KyODxGWVpB9IaG+AUKlAgNpjlYOz6zRTdj5qe4uiav878mya0nZFhYR6",
+	"ymTn2e/Zfp5baFLIKVJUgfoWpNlQwHL8xJzYDplTJlZP5XMgEbwkO+o2E9Qgyj5ewjBUwHTde6YW6os9",
+	"cDlU8KPDhp7mwrZlEpnIVUHEQJMXeZM0lRivFKaDdx+QGbf2n1Ht5h4a+7Aitqueu+drKWKqvd59wjF8",
+	"r2m5Z06rK2oU7kqXr170geTXTGuo4dX8vv/zXfPnY7eelGGifFwnC29JGvZZfYoGyN5pcsp4Q53LHcZI",
+	"7FbY/KTYQgXqtbNEDwFQwQ2xjCkWs8XswDhTpojZQw1Hs4PZkRWHuima50LIzcaOl1TKsWGiiThtoYbz",
+	"8doiGAMpsUB98Vjs56TUSeXOSBR7xqhSucTuvSpjYyBrsDfodU+8hTsvwNp3WmTfj0a5p2rn2skxPmb/",
+	"6HXrvo3jnOLoUlMK+leWqVytF8XY0F9zrRMHVEOnftUZ9pFFh6WFS05Rxq05XCzsp0lRKZYxYM6dH3XP",
+	"r8TqvP2D4Vmrje4s/nrYrO9fzBHH/5FvfFQmqD5g687ouicpW3N88O6pzU/fBIdOCXMqoLcvIew0KnHE",
+	"zp0T3xC7HdDYD1+mLSeo9Ks8ABVIHwLyFmo4IXW2QavOyyZQVGdvg3nJIksqKYrHHSzPHMxts4fl8DsA",
+	"AP//vmDFSfcFAAA=",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

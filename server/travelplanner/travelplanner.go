@@ -33,9 +33,56 @@ func (tp *TravelPlanner) Run() error {
 	return http.ListenAndServe(":8080", handler)
 }
 
-func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details) {} // TODO
+func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details, locationID string) {
+	key := tp.config.TripAdvisorKey
 
-func (tp *TravelPlanner) GetPhotos(photos *tripadvisor.Photos) {} // TODO
+	url := "https://api.content.tripadvisor.com/api/v1/location/" + locationID + "/details?key=" + key + "&language=en&currency=USD"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	req.Header.Add("accept", "application/json")
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	json.Unmarshal(body, &details)
+} // TODO
+
+func (tp *TravelPlanner) GetPhotos(photos *tripadvisor.Photos, locationID string) {
+	key := tp.config.TripAdvisorKey
+	url := "https://api.content.tripadvisor.com/api/v1/location/" + locationID + "/photos?key=" + key + "&language=en"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	req.Header.Add("accept", "application/json")
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	json.Unmarshal(body, &photos)
+} // TODO
 
 func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
 	key := tp.config.TripAdvisorKey
@@ -60,8 +107,6 @@ func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
 	}
 
 	json.Unmarshal(body, &places)
-
-	return
 }
 
 func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params SearchParams) *Response {
@@ -75,11 +120,22 @@ func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params S
 
 	response := []Place{}
 	for i := range places.Data {
+		photos := tripadvisor.Photos{}
+		tp.GetPhotos(&photos, places.Data[i].LocationID)
+		photosList := []string{}
+		for j := range photos.Data {
+			photosList = append(photosList, photos.Data[j].Images.Original.URL)
+		}
+
+		details := tripadvisor.Details{}
+		tp.GetDetails(&details, places.Data[i].LocationID)
+
 		response = append(response, Place{
 			Address: places.Data[i].AddressObj.AddressString,
 			Name:    places.Data[i].Name,
-			Photos:  make([]string, 0), // FOR TESTING
-			Rating:  3,                 // FOR TESTING
+			Photos:  photosList,     // FOR TESTING
+			Rating:  details.Rating, // FOR TESTING
+			URL:     details.WebURL,
 		})
 	}
 

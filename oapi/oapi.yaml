@@ -73,6 +73,8 @@ components:
           type: string
         rating:
           type: number
+        url:
+          type: string
         photos:
           type: array
           items:
@@ -81,6 +83,7 @@ components:
         - name
         - address
         - rating
+        - url
         - photos
     PlacesList:
       type: array

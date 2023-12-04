@@ -11,10 +11,8 @@ type Places struct {
 }
 
 type Details struct {
-	Name   string `json:"name"`
-	WebURL string `json:"web_url"`
-
-	Rating string `json:"rating"`
+	WebURL string  `json:"web_url"`
+	Rating float32 `json:"rating"`
 }
 
 type Photos struct {
