@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/cors"
 
 	"main/config"
+	"main/opencage"
 	"main/tripadvisor"
 )
 
@@ -32,6 +33,8 @@ func (tp *TravelPlanner) Run() error {
 	handler := Handler(tp, WithRouter(router), WithServerBaseURL("/api"))
 	return http.ListenAndServe(":8080", handler)
 }
+
+func (tp *TravelPlanner) GetLatLng(geocode *opencage.Geocode) {} // TODO
 
 func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details, locationID string) {
 	key := tp.config.TripAdvisorKey
