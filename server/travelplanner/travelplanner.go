@@ -78,12 +78,16 @@ func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params S
 func (tp *TravelPlanner) GetLatLng(location string, geocode *opencage.Geocode) {
 	key := tp.config.OpenCageKey
 	url := "https://api.opencagedata.com/geocode/v1/json?q=" + url.QueryEscape(location) + "&key=" + key + "&language=en&pretty=1&no_annotations=1"
+	canCache := true
 
 	cached, err := tp.cache.Get(tp.context, url).Result()
 	if err == nil {
 		fmt.Println("reading from cache:", url)
 		json.Unmarshal([]byte(cached), &geocode)
 		return
+	} else if err != redis.Nil {
+		canCache = false
+		fmt.Println(err)
 	}
 
 	req, err := http.NewRequest("GET", url, nil)
@@ -104,8 +108,10 @@ func (tp *TravelPlanner) GetLatLng(location string, geocode *opencage.Geocode) {
 		fmt.Println(err)
 	}
 
-	tp.cache.Set(tp.context, url, body, 24*time.Hour)
-	fmt.Println("caching", url)
+	if canCache {
+		tp.cache.Set(tp.context, url, body, 24*time.Hour)
+		fmt.Println("caching", url)
+	}
 
 	json.Unmarshal(body, &geocode)
 }
