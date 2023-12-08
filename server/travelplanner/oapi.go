@@ -44,8 +44,8 @@ type SearchParams struct {
 	Filter string `json:"filter"`
 
 	// City Name
-	Location string  `json:"location"`
-	Distance float64 `json:"distance"`
+	Location string `json:"location"`
+	Radius   int32  `json:"radius"`
 }
 
 // Response is a common response struct for all the API calls.
@@ -165,11 +165,11 @@ func (siw *ServerInterfaceWrapper) Search(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// ------------- Required query parameter "distance" -------------
+	// ------------- Required query parameter "radius" -------------
 
-	if err := runtime.BindQueryParameter("form", true, true, "distance", r.URL.Query(), &params.Distance); err != nil {
-		err = fmt.Errorf("invalid format for parameter distance: %w", err)
-		siw.ErrorHandlerFunc(w, r, &RequiredParamError{err, "distance"})
+	if err := runtime.BindQueryParameter("form", true, true, "radius", r.URL.Query(), &params.Radius); err != nil {
+		err = fmt.Errorf("invalid format for parameter radius: %w", err)
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{err, "radius"})
 		return
 	}
 
@@ -328,16 +328,16 @@ func WithErrorHandler(handler func(w http.ResponseWriter, r *http.Request, err e
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/7xUTW8TQQz9KyODxGWVpB9IaG+AUKlAgNpjlYOz6zRTdj5qe4uiav878mya0nZFhYR6",
-	"ymTn2e/Zfp5baFLIKVJUgfoWpNlQwHL8xJzYDplTJlZP5XMgEbwkO+o2E9Qgyj5ewjBUwHTde6YW6os9",
-	"cDlU8KPDhp7mwrZlEpnIVUHEQJMXeZM0lRivFKaDdx+QGbf2n1Ht5h4a+7Aitqueu+drKWKqvd59wjF8",
-	"r2m5Z06rK2oU7kqXr170geTXTGuo4dX8vv/zXfPnY7eelGGifFwnC29JGvZZfYoGyN5pcsp4Q53LHcZI",
-	"7FbY/KTYQgXqtbNEDwFQwQ2xjCkWs8XswDhTpojZQw1Hs4PZkRWHuima50LIzcaOl1TKsWGiiThtoYbz",
-	"8doiGAMpsUB98Vjs56TUSeXOSBR7xqhSucTuvSpjYyBrsDfodU+8hTsvwNp3WmTfj0a5p2rn2skxPmb/",
-	"6HXrvo3jnOLoUlMK+leWqVytF8XY0F9zrRMHVEOnftUZ9pFFh6WFS05Rxq05XCzsp0lRKZYxYM6dH3XP",
-	"r8TqvP2D4Vmrje4s/nrYrO9fzBHH/5FvfFQmqD5g687ouicpW3N88O6pzU/fBIdOCXMqoLcvIew0KnHE",
-	"zp0T3xC7HdDYD1+mLSeo9Ks8ABVIHwLyFmo4IXW2QavOyyZQVGdvg3nJIksqKYrHHSzPHMxts4fl8DsA",
-	"AP//vmDFSfcFAAA=",
+	"H4sIAAAAAAAC/7xUTW8TQQz9KyODxGWVpB9IaG+AUKlAgNpjlYOz6yRTdj5qe4uiKv8deTZNabOiQkI9",
+	"ZbJjv/dsP88dNCnkFCmqQH0H0qwpYDl+Yk5sh8wpE6un8jmQCK7IjrrJBDWIso8r2G4rYLrpPVML9dU+",
+	"cL6t4EeHDR1iYdsyiYxgVRAx0OhFXidNJccrhfHk3Qdkxo39Z1S7eQiNfVgQ21XP3fO1FDHVXu8ecEjf",
+	"a5rvmdPimhqF+9Llqxd9JPk10xJqeDV96P901/zp0K2DMkyUj8tk6S1Jwz6rT9ECsneanDLeUudyhzES",
+	"uwU2Pym2UIF67QzocQBUcEssA8RsMpscGWfKFDF7qOFkcjQ5seJQ10XzVAi5WdtxRaUcGyaaiPMWargc",
+	"ri2DMZASC9RXT8V+TkqdVO6CRLFnjCqVS+zeqzI2FmQN9hZ60xNv4N4LsPSdFtkPo1Huqdq5dnSMT9k/",
+	"et24b8M4xzi61JSC/pVlDIux9b38FWmZOKBCDT7qyTHsR+6j0soMup1buuQUZdiZ49nMfpoUlWIZAubc",
+	"+UH19Fqsyrs/GJ412uDN4q7Hrfr+xfxw+h/5hidlhOoDtu6CbnqSsjOnR+8OTX7+Jjh0SphTCXr7EsLO",
+	"oxJH7Nwl8S2x2wUa+/HLtOUMlX6V9a9A+hCQN1DDGamz/Vl0XtaBojp7GcxLllmgpCgeNrA8cjC1vd7O",
+	"t78DAAD//0+0Unf1BQAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

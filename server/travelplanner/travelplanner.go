@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
@@ -34,7 +35,30 @@ func (tp *TravelPlanner) Run() error {
 	return http.ListenAndServe(":8080", handler)
 }
 
-func (tp *TravelPlanner) GetLatLng(geocode *opencage.Geocode) {} // TODO
+func (tp *TravelPlanner) GetLatLng(location string, geocode *opencage.Geocode) {
+	key := tp.config.OpenCageKey
+	url := "https://api.opencagedata.com/geocode/v1/json?q=" + url.QueryEscape(location) + "&key=" + key + "&language=en&pretty=1&no_annotations=1"
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	req.Header.Add("accept", "application/json")
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	json.Unmarshal(body, &geocode)
+}
 
 func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details, locationID string) {
 	key := tp.config.TripAdvisorKey
@@ -60,7 +84,7 @@ func (tp *TravelPlanner) GetDetails(details *tripadvisor.Details, locationID str
 	}
 
 	json.Unmarshal(body, &details)
-} // TODO
+}
 
 func (tp *TravelPlanner) GetPhotos(photos *tripadvisor.Photos, locationID string) {
 	key := tp.config.TripAdvisorKey
@@ -85,11 +109,29 @@ func (tp *TravelPlanner) GetPhotos(photos *tripadvisor.Photos, locationID string
 	}
 
 	json.Unmarshal(body, &photos)
-} // TODO
+}
 
-func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
+func (tp *TravelPlanner) GetPlaces(lat string, long string, radius int32, filter string, places *tripadvisor.Places) {
 	key := tp.config.TripAdvisorKey
-	url := "https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=42.3455%252C-71.10767&key=" + key + "&category=restaurants&radius=100&radiusUnit=mi&language=en"
+	latLong := lat + "%252C" + long
+	// url := "https://api.content.tripadvisor.com/api/v1/location/nearby_search?latLong=" + latLong + "&key=" + key + "&category=" + filter + "&radius=" + fmt.Sprint(radius) + "&radiusUnit=mi&language=en"
+
+	baseURL := "https://api.content.tripadvisor.com/api/v1/location/nearby_search"
+	params := url.Values{"key": {key},
+		"latLong":    {latLong},
+		"category":   {filter},
+		"radius":     {fmt.Sprint(radius)},
+		"radiusUnit": {"mi"},
+		"language":   {"en"},
+	}
+
+	u, err := url.Parse(baseURL)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	u.RawQuery = params.Encode()
+	url := u.String()
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -114,10 +156,15 @@ func (tp *TravelPlanner) GetPlaces(places *tripadvisor.Places) {
 
 func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params SearchParams) *Response {
 	// fmt.Printf("Ayo we got shit")
-	fmt.Println(fmt.Sprint(params.Distance) + " " + params.Filter + " " + params.Location)
+	// fmt.Println(fmt.Sprint(params.Radius) + " " + params.Filter + " " + params.Location)
+
+	geocode := opencage.Geocode{}
+	tp.GetLatLng(params.Location, &geocode)
+	lat := fmt.Sprint(geocode.Results[0].Geometry.Lat)
+	long := fmt.Sprint(geocode.Results[0].Geometry.Lng)
 
 	places := tripadvisor.Places{}
-	tp.GetPlaces(&places)
+	tp.GetPlaces(lat, long, params.Radius, params.Filter, &places)
 
 	fmt.Println(fmt.Sprint(places))
 
