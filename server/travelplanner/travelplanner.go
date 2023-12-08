@@ -1,15 +1,18 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
+	"github.com/redis/go-redis/v9"
 
 	"main/config"
 	"main/opencage"
@@ -17,7 +20,9 @@ import (
 )
 
 type TravelPlanner struct {
-	config config.Config
+	config  config.Config
+	cache   *redis.Client
+	context context.Context
 }
 
 func (tp *TravelPlanner) Run() error {
@@ -35,9 +40,51 @@ func (tp *TravelPlanner) Run() error {
 	return http.ListenAndServe(":8080", handler)
 }
 
+func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params SearchParams) *Response {
+	geocode := opencage.Geocode{}
+	tp.GetLatLng(params.Location, &geocode)
+	lat := fmt.Sprint(geocode.Results[0].Geometry.Lat)
+	long := fmt.Sprint(geocode.Results[0].Geometry.Lng)
+
+	places := tripadvisor.Places{}
+	tp.GetPlaces(lat, long, params.Radius, params.Filter, &places)
+
+	// fmt.Println(fmt.Sprint(places))
+
+	response := []Place{}
+	for i := range places.Data {
+		photos := tripadvisor.Photos{}
+		tp.GetPhotos(&photos, places.Data[i].LocationID)
+		photosList := []string{}
+		for j := range photos.Data {
+			photosList = append(photosList, photos.Data[j].Images.Original.URL)
+		}
+
+		details := tripadvisor.Details{}
+		tp.GetDetails(&details, places.Data[i].LocationID)
+
+		response = append(response, Place{
+			Address: places.Data[i].AddressObj.AddressString,
+			Name:    places.Data[i].Name,
+			Photos:  photosList,     // FOR TESTING
+			Rating:  details.Rating, // FOR TESTING
+			URL:     details.WebURL,
+		})
+	}
+
+	return SearchJSON200Response(response)
+}
+
 func (tp *TravelPlanner) GetLatLng(location string, geocode *opencage.Geocode) {
 	key := tp.config.OpenCageKey
 	url := "https://api.opencagedata.com/geocode/v1/json?q=" + url.QueryEscape(location) + "&key=" + key + "&language=en&pretty=1&no_annotations=1"
+
+	cached, err := tp.cache.Get(tp.context, url).Result()
+	if err == nil {
+		fmt.Println("reading from cache:", url)
+		json.Unmarshal([]byte(cached), &geocode)
+		return
+	}
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -56,6 +103,9 @@ func (tp *TravelPlanner) GetLatLng(location string, geocode *opencage.Geocode) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	tp.cache.Set(tp.context, url, body, 24*time.Hour)
+	fmt.Println("caching", url)
 
 	json.Unmarshal(body, &geocode)
 }
@@ -152,42 +202,4 @@ func (tp *TravelPlanner) GetPlaces(lat string, long string, radius int32, filter
 	}
 
 	json.Unmarshal(body, &places)
-}
-
-func (tp *TravelPlanner) Search(w http.ResponseWriter, r *http.Request, params SearchParams) *Response {
-	// fmt.Printf("Ayo we got shit")
-	// fmt.Println(fmt.Sprint(params.Radius) + " " + params.Filter + " " + params.Location)
-
-	geocode := opencage.Geocode{}
-	tp.GetLatLng(params.Location, &geocode)
-	lat := fmt.Sprint(geocode.Results[0].Geometry.Lat)
-	long := fmt.Sprint(geocode.Results[0].Geometry.Lng)
-
-	places := tripadvisor.Places{}
-	tp.GetPlaces(lat, long, params.Radius, params.Filter, &places)
-
-	fmt.Println(fmt.Sprint(places))
-
-	response := []Place{}
-	for i := range places.Data {
-		photos := tripadvisor.Photos{}
-		tp.GetPhotos(&photos, places.Data[i].LocationID)
-		photosList := []string{}
-		for j := range photos.Data {
-			photosList = append(photosList, photos.Data[j].Images.Original.URL)
-		}
-
-		details := tripadvisor.Details{}
-		tp.GetDetails(&details, places.Data[i].LocationID)
-
-		response = append(response, Place{
-			Address: places.Data[i].AddressObj.AddressString,
-			Name:    places.Data[i].Name,
-			Photos:  photosList,     // FOR TESTING
-			Rating:  details.Rating, // FOR TESTING
-			URL:     details.WebURL,
-		})
-	}
-
-	return SearchJSON200Response(response)
 }

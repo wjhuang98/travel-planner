@@ -24,10 +24,10 @@ paths:
           required: true
           description: City Name
         - in: query
-          name: distance
+          name: radius
           schema:
-            type: number
-            format: double
+            type: integer
+            format: int32
           required: true
       responses:
           "200":

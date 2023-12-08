@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"main/config"
 	"os"
 	"os/signal"
+
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
@@ -12,8 +15,17 @@ func main() {
 	listenCh := make(chan error)
 	signal.Notify(notifyCh, os.Interrupt)
 
+	context := context.Background()
+	cache := redis.NewClient(&redis.Options{
+		Addr:     "localhost:6379",
+		Password: "",
+		DB:       0,
+	})
+
 	tp := TravelPlanner{
-		config: config.GetConfig(),
+		config:  config.GetConfig(),
+		cache:   cache,
+		context: context,
 	}
 
 	go func() {
