@@ -1,6 +1,6 @@
 // import Layout from "../components/Layout";
 import { useState } from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { GoogleLogin, googleLogout } from "@react-oauth/google";
 
 const Home = () => {
   const [input, setInput] = useState<string>("");
@@ -50,6 +50,15 @@ const Home = () => {
     setIsLoggedIn(true);
   };
 
+  const handleLogout = async () => {
+    try {
+      await googleLogout();
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.log("Login Failed", error);
+    }
+  };
+
   const handleLoginError = () => {
     console.log("Login Failed");
   };
@@ -67,29 +76,31 @@ const Home = () => {
           <h1 className="text-4xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">
             Travel Planner
           </h1>
-          <div className="w-full h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-700">
-            <input
-              type="text"
-              placeholder="Search Destination"
-              onChange={(e) => setInput(e.target.value)}
-              className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg"
-            />
-            <button className="rounded-r-full h-full w-16 pl-4">
-              <svg
-                className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-6 h-6"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-                />
-              </svg>
-            </button>
-          </div>
+          {isLoggedIn && (
+            <div className="w-full h-16 place-self-center flex items-center shadow-inner rounded-full bg-neutral-700">
+              <input
+                type="text"
+                placeholder="Search Destination"
+                onChange={(e) => setInput(e.target.value)}
+                className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg"
+              />
+              <button className="rounded-r-full h-full w-16 pl-4">
+                <svg
+                  className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                  />
+                </svg>
+              </button>
+            </div>
+          )}
 
           <div className="w-full h-full flex justify-center items-center space-x-2 text-neutral-200">
             {isLoggedIn ? (
@@ -98,6 +109,7 @@ const Home = () => {
                 <h1 className="text-4xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">
                   Plan your Dream Vacation!
                 </h1>
+                <button onClick={handleLogout}>Logout</button>
               </div>
             ) : (
               // Render Login component for non-authenticated user
@@ -164,5 +176,4 @@ const Home = () => {
     </div>
   );
 };
-
 export default Home;
