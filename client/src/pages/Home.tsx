@@ -1,31 +1,32 @@
 // import Layout from "../components/Layout";
 import { useState } from "react";
+import Place from "../components/Place";
 
 const Home = () => {
     const [input, setInput] = useState<string>("");
     const [distance, setDistance] = useState<number>(25);
     const [filter, setFilter] = useState<string>("")
 
-    async function fetchBackendData(): Promise<any> {
-        // const queryParams = {
-        //     location: input,
-        //     distance: distance,
-        //     filter: filter,
-        // };
-      
-        // const queryString = Object.keys(queryParams)
-        // .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
-        // .join('&');
-        const queryString = "location=" + encodeURIComponent(input) + "&distance=" + encodeURIComponent(distance) + "&filter=" + encodeURIComponent(filter);
+    interface apiResponse {
+        name: string;
+        address: string;
+        rating: number;
+        url: string;
+        photos: string[];
+    }
+    const [data, setData] = useState<apiResponse[]>([]);
+
+    async function fetchBackendData(){
+        const queryString = "location=" + encodeURIComponent(input) + "&radius=" + encodeURIComponent(distance) + "&filter=" + encodeURIComponent(filter);
     
         try {
             const response = await fetch(`http://localhost:8080/api/search?${queryString}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
-            const data = await response.json();
-        // Process your data
-            return data; // Return the data for further processing
+            // const data = await response.json();
+            setData(await response.json());
+            console.log(data);
         } catch (error) {
             console.error('Error fetching data: ', error);
             // Handle the error
@@ -92,7 +93,13 @@ const Home = () => {
                     </div>
                 </div>
             </form>
+
         </div>
+            <div className="w-full flex justify-center">
+                <ul className="w-5/6 flex flex-col space-y-2">
+                    {data.map(Place)}
+                </ul>
+            </div>
         </div>
     )
 }
