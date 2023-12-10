@@ -1,5 +1,5 @@
-// import Layout from "../components/Layout";
 import { useState } from "react";
+import Place from "../components/Place";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 
 const Home = () => {
@@ -8,42 +8,36 @@ const Home = () => {
   const [filter, setFilter] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
-  async function fetchBackendData(): Promise<any> {
-    // const queryParams = {
-    //     location: input,
-    //     distance: distance,
-    //     filter: filter,
-    // };
+  interface apiResponse {
+    name: string;
+    address: string;
+    rating: number;
+    url: string;
+    photos: string[];
+  }
 
-    // const queryString = Object.keys(queryParams)
-    // .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
-    // .join('&');
-    const queryString =
-      "location=" +
-      encodeURIComponent(input) +
-      "&distance=" +
-      encodeURIComponent(distance) +
-      "&filter=" +
-      encodeURIComponent(filter);
+  const [data, setData] = useState<apiResponse[]>([]);
+
+  async function fetchBackendData() {
+    const queryString = "location=" + encodeURIComponent(input) + "&radius=" + encodeURIComponent(distance) + "&filter=" + encodeURIComponent(filter);
 
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/search?${queryString}`
-      );
+      const response = await fetch(`http://localhost:8080/api/search?${queryString}`);
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      const data = await response.json();
-      // Process your data
-      return data; // Return the data for further processing
+      // const data = await response.json();
+      setData(await response.json());
+      console.log(data);
     } catch (error) {
-      console.error("Error fetching data: ", error);
+      console.error('Error fetching data: ', error);
       // Handle the error
       throw error; // Re-throw the error if you want to handle it at a higher level
     }
   }
 
-  const handleLoginSuccess = (credentialResponse) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleLoginSuccess = (credentialResponse: any) => {
     console.log(credentialResponse);
 
     // Update the authentication status
@@ -126,11 +120,10 @@ const Home = () => {
                 setFilter(`${filter == "attractions" ? "" : "attractions"}`);
                 e.preventDefault();
               }}
-              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${
-                filter == "attractions"
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
-                  : "hover:bg-neutral-800"
-              }`}
+              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "attractions"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
+                : "hover:bg-neutral-800"
+                }`}
             >
               <svg
                 className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-full h-6"
@@ -152,11 +145,10 @@ const Home = () => {
                 setFilter(`${filter == "restaurants" ? "" : "restaurants"}`);
                 e.preventDefault();
               }}
-              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${
-                filter == "restaurants"
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
-                  : "hover:bg-neutral-800"
-              }`}
+              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "restaurants"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
+                : "hover:bg-neutral-800"
+                }`}
             >
               <svg
                 className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-full h-6"
@@ -178,11 +170,10 @@ const Home = () => {
                 setFilter(`${filter == "hotels" ? "" : "hotels"}`);
                 e.preventDefault();
               }}
-              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${
-                filter == "hotels"
-                  ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
-                  : "hover:bg-neutral-800"
-              }`}
+              className={`rounded-lg bg-neutral-700 shaddow-lg h-full w-1/5 ${filter == "hotels"
+                ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-neutral-100 hover:from-cyan-700 hover:to-blue-700"
+                : "hover:bg-neutral-800"
+                }`}
             >
               <svg
                 className="stroke-neutral-400 hover:stroke-neutral-200 hover:ping w-full h-6"
@@ -211,6 +202,12 @@ const Home = () => {
             </div>
           </div>
         </form>
+
+      </div>
+      <div className="w-full flex justify-center">
+        <ul className="w-5/6 flex flex-col space-y-2">
+          {data.map(Place)}
+        </ul>
       </div>
     </div>
   );
