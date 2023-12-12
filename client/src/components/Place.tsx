@@ -13,11 +13,11 @@ const Place = (props: Props) => {
             <div className="aspect-square w-40 object-cover">
                 <img src={props.photos[0]} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col pt-2 pl-4">
                 <h2 className="">{props.name}</h2>
-                <h3>{props.address}</h3>
-                <h3>{props.rating}</h3>
-                {/* <h3>{props.url}</h3> */}
+                <h3 className="">{props.address}</h3>
+                {/* <h3>{props.rating}</h3> */}
+                <h3>{props.url}</h3>
             </div>
 
 

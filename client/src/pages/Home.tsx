@@ -58,7 +58,7 @@ const Home = () => {
   };
 
   return (
-    <div className="w-full h-screen pt-4 bg-neutral-900">
+    <div className="w-full min-h-screen pt-4 bg-neutral-900">
       <div className="flex justify-center w-full">
         <form
           onSubmit={(e) => {
@@ -76,7 +76,7 @@ const Home = () => {
                 type="text"
                 placeholder="Search Destination"
                 onChange={(e) => setInput(e.target.value)}
-                className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg"
+                className="h-full bg-transparent rounded-l-full flex-grow focus:outline-none pl-8 text-lg text-neutral-200"
               />
               <button className="rounded-r-full h-full w-16 pl-4">
                 <svg
@@ -100,7 +100,7 @@ const Home = () => {
             {isLoggedIn ? (
               // Render Home content for authenticated user
               <div className="w-full h-full text-center">
-                <h1 className="text-4xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text">
+                <h1 className="text-4xl font-semibold bg-gradient-to-r from-cyan-500 to-blue-500 text-transparent bg-clip-text pb-1">
                   Plan your Dream Vacation!
                 </h1>
                 <button onClick={handleLogout}>Logout</button>
@@ -204,8 +204,8 @@ const Home = () => {
         </form>
 
       </div>
-      <div className="w-full flex justify-center">
-        <ul className="w-5/6 flex flex-col space-y-2">
+      <div className="w-full flex justify-center pt-4">
+        <ul className="w-1/2 flex flex-col space-y-2 text-neutral-200 pb-4">
           {data.map(Place)}
         </ul>
       </div>
